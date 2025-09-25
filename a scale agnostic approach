@@ -1,0 +1,51 @@
+"""A Scale-Agnostic Calculator"""
+
+walker Calculator {
+    has num1: float = 0.0;
+    has num2: float = 0.0;
+    has op: str = "+";
+
+    can start with `root entry;
+    can calculate with root entry;
+}
+
+with entry {
+    root spawn Calculator();
+}
+
+impl Calculator.start {
+    print("Welcome to the Calculator!");
+    disengage;
+}
+
+impl Calculator.calculate {
+    if not has(self.num1) or not has(self.num2) or not has(self.op) {
+        self.num1 = float(input("Enter first number: "));
+        self.num2 = float(input("Enter second number: "));
+        self.op = input("Choose operation (+, -, *, /): ");
+    }
+
+    if self.op == "+" {
+        result = self.num1 + self.num2;
+    } elif self.op == "-" {
+        result = self.num1 - self.num2;
+    } elif self.op == "*" {
+        result = self.num1 * self.num2;
+    } elif self.op == "/" {
+        if self.num2 == 0 {
+            print("Cannot divide by zero.");
+            result = None;
+        } else {
+            result = self.num1 / self.num2;
+        }
+    } else {
+        print("Invalid operation!");
+        result = None;
+    }
+
+    if result != None {
+        print(f"Result: {result}");
+    }
+
+    disengage;
+}

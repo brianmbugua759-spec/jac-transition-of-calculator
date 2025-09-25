@@ -1,0 +1,75 @@
+"""A Simple Calculator in Jac"""
+
+obj Game {
+    def play {
+        std.out("This method should be implemented by subclasses.");
+    }
+}
+
+obj Calculator extends Game {
+    has operations: list[str] = ["Addition", "Subtraction", "Multiplication", "Division"];
+
+    def play {
+        std.out(" Welcome to the Calculator!");
+
+        while true {
+            std.out("\nChoose an operation:");
+            for i in range(0, len(self.operations)) {
+                std.out(f"{i+1}. {self.operations[i]}");
+            }
+            std.out("5. Exit");
+
+            let choice = std.in();
+
+            if choice == "5" {
+                std.out(" Goodbye!");
+                break;
+            }
+
+            let idx = int(choice) - 1;
+
+            if idx < 0 or idx >= len(self.operations) {
+                std.out(" Invalid choice, try again.");
+                continue;
+            }
+
+            try {
+                std.out("Enter first number: ");
+                let num1 = float(std.in());
+
+                std.out("Enter second number: ");
+                let num2 = float(std.in());
+
+                if idx == 0 {
+                    std.out(f" Addition result: {self.add(num1, num2)}");
+                }
+                elif idx == 1 {
+                    std.out(f" Subtraction result: {self.subtract(num1, num2)}");
+                }
+                elif idx == 2 {
+                    std.out(f" Multiplication result: {self.multiply(num1, num2)}");
+                }
+                elif idx == 3 {
+                    if num2 == 0 {
+                        std.out("Cannot divide by zero.");
+                        continue;
+                    }
+                    std.out(f" Division result: {self.divide(num1, num2)}");
+                }
+            }
+            except {
+                std.out(" Please enter valid input!");
+            }
+        }
+    }
+
+    def add(a: float, b: float) -> float { return a + b; }
+    def subtract(a: float, b: float) -> float { return a - b; }
+    def multiply(a: float, b: float) -> float { return a * b; }
+    def divide(a: float, b: float) -> float { return a / b; }
+}
+
+with entry {
+    let calc = Calculator();
+    calc.play;
+}

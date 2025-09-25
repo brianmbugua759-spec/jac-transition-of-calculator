@@ -1,0 +1,85 @@
+"""A Simple Calculator"""
+
+obj Game {
+    def play(self) {
+        std.out("This method should be implemented by subclasses.");
+    }
+}
+
+obj Calculator extends Game {
+    def init(self) {
+        super.init();
+        self.operations = {
+            "1": "Addition",
+            "2": "Subtraction",
+            "3": "Multiplication",
+            "4": "Division",
+        };
+    }
+
+    def play(self) {
+        std.out(" Welcome to the Calculator!");
+
+        while true {
+            std.out("\nChoose an operation:");
+            for key, name in self.operations {
+                std.out(f"{key}. {name}");
+            }
+            std.out("5. Exit");
+
+            let choice = std.in();
+
+            if choice == "5" {
+                std.out(" Goodbye!");
+                break;
+            }
+
+            if !(choice in self.operations) {
+                std.out(" Invalid choice, try again.");
+                continue;
+            }
+
+            try {
+                std.out("Enter first number: ");
+                let num1 = float(std.in());
+
+                std.out("Enter second number: ");
+                let num2 = float(std.in());
+
+                if choice == "1" {
+                    let result = self.add(num1, num2);
+                    std.out(f" Addition result: {result}");
+                }
+                elif choice == "2" {
+                    let result = self.subtract(num1, num2);
+                    std.out(f" Subtraction result: {result}");
+                }
+                elif choice == "3" {
+                    let result = self.multiply(num1, num2);
+                    std.out(f" Multiplication result: {result}");
+                }
+                elif choice == "4" {
+                    if num2 == 0 {
+                        std.out(" Cannot divide by zero.");
+                        continue;
+                    }
+                    let result = self.divide(num1, num2);
+                    std.out(f" Division result: {result}");
+                }
+            }
+            except {
+                std.out(" Please enter valid input!");
+            }
+        }
+    }
+
+    def add(self, a, b) { return a + b; }
+    def subtract(self, a, b) { return a - b; }
+    def multiply(self, a, b) { return a * b; }
+    def divide(self, a, b) { return a / b; }
+}
+
+with entry {
+    let calc = Calculator();
+    calc.play();
+}

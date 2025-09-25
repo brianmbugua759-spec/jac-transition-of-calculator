@@ -1,0 +1,81 @@
+"""A Simple Calculator"""
+
+walker Calculator {
+    can start_calc with `root entry;
+    def process_operation(choice: str, num1: float, num2: float);
+}
+
+node turn {
+    can check with Calculator entry;
+}
+
+# Run the calculator
+with entry {
+    Calculator() spawn root;
+}
+
+# -----------------------------
+# Node implementation
+# -----------------------------
+impl turn.check {
+    print("\nChoose an operation:");
+    print("1. Addition (+)");
+    print("2. Subtraction (-)");
+    print("3. Multiplication (*)");
+    print("4. Division (/)");
+    print("5. Exit");
+
+    let choice = input("Enter your choice: ");
+
+    if choice == "5" {
+        print(" Goodbye!");
+        disengage;
+    } else {
+        if not (choice in ["1", "2", "3", "4"]) {
+            print(" Invalid choice, try again.");
+            visit [-->];
+        } else {
+            try {
+                let num1 = float(input("Enter first number: "));
+                let num2 = float(input("Enter second number: "));
+                visitor.process_operation(choice, num1, num2);
+            } catch {
+                print(" Invalid input, please enter valid numbers.");
+            }
+            visit [-->];
+        }
+    }
+}
+
+# -----------------------------
+# Walker implementation
+# -----------------------------
+impl Calculator.start_calc {
+    end: `root | turn = here;
+    for i = 0 to i < 10 by i += 1 {
+        end ++> (end := turn());
+    }
+    visit [-->];
+}
+
+impl Calculator.process_operation(choice: str, num1: float, num2: float) {
+    if choice == "1" {
+        print(f" Addition result: {num1 + num2}");
+    } else {
+        if choice == "2" {
+            print(f" Subtraction result: {num1 - num2}");
+        } else {
+            if choice == "3" {
+                print(f" Multiplication result: {num1 * num2}");
+            } else {
+                if choice == "4" {
+                    if num2 == 0 {
+                        print(" Cannot divide by zero.");
+                    } else {
+                        print(f" Division result: {num1 / num2}");
+                    }
+                }
+            }
+        }
+    }
+}

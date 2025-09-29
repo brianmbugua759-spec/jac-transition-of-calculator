@@ -1,0 +1,72 @@
+"""AI-Powered Calculator"""
+
+import random;
+# import from byllm.llm { Model }
+# Use the appropriate LLM plugin you have installed
+# glob llm = Model(model_name="gemini/gemini-2.0-flash", verbose=False);
+
+"""Provide a hint if input is invalid or operation fails"""
+def give_hint(op: str, num1: float, num2: float) -> str by llm();
+
+walker CalcWalker {
+    has num1: float;
+    has num2: float;
+    has op: str;
+
+    can start with `root entry;
+    can calculate with calc_node entry;
+}
+
+node calc_node {
+    has result: float;
+}
+
+# Run locally
+with entry:__main__ {
+    root spawn CalcWalker();
+}
+
+impl CalcWalker.start {
+    # Ask user for input
+    self.num1 = float(input("Enter first number: "));
+    self.num2 = float(input("Enter second number: "));
+    self.op = input("Choose operation (+, -, *, /): ");
+
+    # Create a node to hold calculation result
+    if not [root --> (`?calc_node)] {
+        next = root ++> calc_node(0.0);
+    } else {
+        next = [root --> (`?calc_node)];
+    }
+    visit next;
+}
+
+impl CalcWalker.calculate {
+    result = 0.0;
+
+    if self.op == "+" {
+        result = self.num1 + self.num2;
+    } elif self.op == "-" {
+        result = self.num1 - self.num2;
+    } elif self.op == "*" {
+        result = self.num1 * self.num2;
+    } elif self.op == "/" {
+        if self.num2 == 0 {
+            print(" Cannot divide by zero.");
+            # hint = give_hint(self.op, self.num1, self.num2);
+            # print(hint);
+            disengage;
+        } else {
+            result = self.num1 / self.num2;
+        }
+    } else {
+        print("Invalid operation!");
+        # hint = give_hint(self.op, self.num1, self.num2);
+        # print(hint);
+        disengage;
+    }
+
+    # Store result in node
+    here.result = result;
+    print(f"Result: {here.result}");
+    disengage;
